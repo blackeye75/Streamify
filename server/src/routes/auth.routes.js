@@ -8,6 +8,10 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/logout', logout);
 
-router.post('/onBoarding', protectRoute, onBoard)
+router.post('/onboarding', protectRoute, onBoard);
+
+router.get("/me", protectRoute, (req, res) => {
+  res.status(200).json({ success: true, user: req.user });
+});
 
 export default router;
