@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route } from 'react-router'
+import { Routes, Route, Navigate } from 'react-router'
 import { ShipWheelIcon } from "lucide-react";
 import './App.css'
 import HomePage from './pages/HomePage'
@@ -12,32 +12,39 @@ import OnBoardingPage from './pages/OnBoardingPage'
 import toast, { Toaster } from 'react-hot-toast'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import {axiosInstance} from './lib/axios'
+import { axiosInstance } from './lib/axios'
 
 function App() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['authUser'],
+  const { data: authData, isLoading, error } = useQuery({
+    queryKey: ["authUser"],
     queryFn: async () => {
       const res = await axiosInstance.get('/auth/me')
-      return response.data
-    }
+      // console.log(res);
+
+      return res.data;
+    },
+    // retry: false,
   })
-  console.log(data);
-  
+
+  const authUser = authData?.user
+  console.log(authUser);
+
 
   return (
     <div className='h-screen' data-theme="forest">
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/call" element={<CallPage />} />
-        <Route path="/chat" element={<SignUpPage />} />
-        <Route path="/onboarding" element={<SignUpPage />} />
+        <Route
+          path="/"
+          element={authUser ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/login" />} />
+        <Route path="/notifications" element={authUser ? <NotificationsPage /> : <Navigate to="/login" />} />
+        <Route path="/call" element={authUser ? <CallPage /> : <Navigate to="/login" />} />
+        <Route path="/chat" element={authUser ? <SignUpPage /> : <Navigate to="/login" />} />
+        <Route path="/onboarding" element={authUser ? <OnBoardingPage /> : <Navigate to="/login" />} />
       </Routes>
       <Toaster />
-      <button onClick={() => toast.success('Successfully hello world toasted!')} >Check</button>
     </div>
   )
 }
