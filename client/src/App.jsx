@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router'
 import { ShipWheelIcon } from "lucide-react";
 import './App.css'
@@ -10,24 +9,22 @@ import CallPage from './pages/CallPage'
 import ChatPage from './pages/ChatPage'
 import OnBoardingPage from './pages/OnBoardingPage'
 import toast, { Toaster } from 'react-hot-toast'
-import { useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { axiosInstance } from './lib/axios'
+import PageLoader from './components/PageLoader';
+import useAuthUser from './hooks/useAuthUser';
 
 function App() {
-  const { data: authData, isLoading, error } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      const res = await axiosInstance.get('/auth/me')
-      // console.log(res);
 
-      return res.data;
-    },
-    // retry: false,
-  })
 
-  const authUser = authData?.user
-  console.log(authUser);
+  const { isLoading, authUser } = useAuthUser();
+
+  const isAuthenticated = Boolean(authUser);
+  const isOnBoarded = authUser?.isOnboarded;
+  console.log(isOnBoarded);
+  
+
+  console.log("authUser",authUser,isAuthenticated)
+
+  if (isLoading) return <PageLoader />
 
 
   return (
@@ -35,14 +32,15 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={authUser ? <HomePage /> : <Navigate to="/login" />}
+          element={isAuthenticated && isOnBoarded ? (<HomePage />) : (<Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />)}
         />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/login" />} />
-        <Route path="/notifications" element={authUser ? <NotificationsPage /> : <Navigate to="/login" />} />
-        <Route path="/call" element={authUser ? <CallPage /> : <Navigate to="/login" />} />
-        <Route path="/chat" element={authUser ? <SignUpPage /> : <Navigate to="/login" />} />
-        <Route path="/onboarding" element={authUser ? <OnBoardingPage /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={!isAuthenticated ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
+        <Route path="/notifications" element={isAuthenticated ? <NotificationsPage /> : <Navigate to="/login" />} />
+        <Route path="/call" element={isAuthenticated ? <CallPage /> : <Navigate to="/login" />} />
+        <Route path="/chat" element={isAuthenticated ? <SignUpPage /> : <Navigate to="/login" />} />
+        <Route path="/onboarding" element={isAuthenticated ? (!isOnBoarded ? (<OnBoardingPage />) : (<Navigate to="/" />)) : (<Navigate to="/login" />
+        )} />
       </Routes>
       <Toaster />
     </div>
