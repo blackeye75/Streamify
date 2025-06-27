@@ -12,11 +12,14 @@ import toast, { Toaster } from 'react-hot-toast'
 import PageLoader from './components/PageLoader';
 import useAuthUser from './hooks/useAuthUser';
 import Layout from './components/Layout';
+import { useThemeStore } from './store/useThemeStore';
 
 function App() {
 
 
   const { isLoading, authUser } = useAuthUser();
+
+  const {theme,settheme}= useThemeStore()
 
   const isAuthenticated = Boolean(authUser);
   const isOnBoarded = authUser?.isOnboarded;
@@ -29,7 +32,7 @@ function App() {
 
 
   return (
-    <div className='h-screen' data-theme="emerald">
+    <div className='h-screen' data-theme={theme}>
       <Routes>
         <Route
           path="/"

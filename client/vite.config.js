@@ -13,7 +13,7 @@ export default defineConfig({
         // plugins: [daisyui],
         daisyui: {
           themes: ["light", "dark", "cupcake", "bumblebee", "emerald","forest", "corporate", "synthwave", "retro", "cyberpunk", "valentine"], // Add your themes here
-          darkTheme: "dark", // name of one of the included themes for dark mode
+          darkTheme: "dark", // name of one of the included themes for dark modeh
         },
       },
     }),],
