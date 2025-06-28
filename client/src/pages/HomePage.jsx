@@ -15,11 +15,16 @@ const HomePage = () => {
     queryKey: ["friends"],
     queryFn: getUserFriends,
   });
+  console.log(loadingFriends,"IsLoadingFriend");
+  
 
   const { data: recommendedUsers = [], isLoading: loadingUsers } = useQuery({
     queryKey: ["users"],
     queryFn: getRecommendedUsers,
+    
   });
+  // console.log(loadingUsers);
+  
 
   const { data: outgoingFriendReqs } = useQuery({
     queryKey: ["outgoingFriendReqs"],
@@ -93,7 +98,8 @@ const HomePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recommendedUsers.map((user) => {
                 const hasRequestBeenSent = outgoingRequestsIds.has(user._id);
-
+                // console.log(hasRequestBeenSent,"req sent");
+                
                 return (
                   <div
                     key={user._id}

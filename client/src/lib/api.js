@@ -47,7 +47,16 @@ export async function getOutgoingFriendReqs() {
 }
 
 export async function sendFriendRequest(userId) {
-  const response = await axiosInstance.post(`/users/friend-request/${userId}`);
+  try {
+    const response = await axiosInstance.post(`/users/friend-request/${userId}`);
+  console.log(response);
+  } catch (error) {
+    // Handle error if needed
+    console.error("Error sending friend request:", error);
+  }
+  
+  
   return response.data;
+
 }
 
